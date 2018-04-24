@@ -5,7 +5,30 @@
   <title>ES6-webpack-starter</title>
 </head>
 <body>
-  <div id="app"></div>
+  <button id="record">Record</button>
+  <button id="stop">Stop</button>
+  <h2>Web Audio Api Equalizer</h2>
+  <div class="eq">
+    <div class="controls">
+      <label>Low Gain</label>
+      <input id="lowgain" type="range" value="100" step="1" min="0" max="100"></input>
+    </div>
+    <div class="controls">
+      <label>Mid Gain</label>
+      <input id="midgain" type="range" value="100" step="1" min="0" max="100"></input>
+    </div>
+    <div class="controls">
+      <label>High Gain</label>
+      <input id="highgain" type="range" value="100" step="1" min="0" max="100"></input>
+    </div>
+  </div>
+  <h3>André Michelle <a href="www.audiotool.com/track/volution/">Volution</a></h3>
+  <audio id="player" controls crossorigin>
+    <source src="http://api.audiotool.com/track/volution/play.mp3" type="audio/mpeg">
+    <source src="http://api.audiotool.com/track/volution/play.ogg" type="audio/ogg">
+    Your browser does not support the audio tag.
+  </audio>
+  <canvas id="graph" width="500" height="500" />
 </body>
 </html>
 
