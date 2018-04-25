@@ -40,7 +40,9 @@
     "webpack-dev-server": "^1.15.0"
   },
   "dependencies": {
+    "fetch": "^1.1.0",
     "recorderjs": "git+https://github.com/mattdiamond/Recorderjs.git",
+    "web-audio-beat-detector": "^6.0.35",
     "webaudio-peaks": "0.0.6"
   }
 }

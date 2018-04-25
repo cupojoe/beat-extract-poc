@@ -3,6 +3,7 @@ import './style.scss';
 import extractPeaks from 'webaudio-peaks'
 import GraphEQ from './graph.js'
 import Recorder from 'recorderjs'
+import { guess, analyze } from 'web-audio-beat-detector'
 
 // How to hack an equalizer with two biquad filters
 //
@@ -117,7 +118,16 @@ if (navigator.mediaDevices) {
         newBuffer.copyToChannel(buffers[0], 0)
         newBuffer.copyToChannel(buffers[1], 1)
         console.log(newBuffer, buffers)
-        console.log(extractPeaks(newBuffer, 2048))
+        // console.log(extractPeaks(newBuffer, 2048))
+        analyze(newBuffer)
+          .then(({ bpm, offset }) => {
+            console.log(bpm, offset)
+              // the bpm and offset could be guessed
+          })
+          .catch((err) => {
+            console.log(err)
+              // something went wrong
+          });
       })
     })
   })
