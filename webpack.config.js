@@ -14,7 +14,7 @@ var entrypoint = process.env.npm_lifecycle_event === 'dev' ?
   './app/index.js';
 
 module.exports = {
-  entry: entrypoint,
+  entry: ['whatwg-fetch', entrypoint],
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.js'

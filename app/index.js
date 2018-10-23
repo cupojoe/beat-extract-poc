@@ -4,6 +4,7 @@ import extractPeaks from 'webaudio-peaks'
 import GraphEQ from './graph.js'
 import Recorder from 'recorderjs'
 import { guess, analyze } from 'web-audio-beat-detector'
+import 'whatwg-fetch'
 
 // How to hack an equalizer with two biquad filters
 //
@@ -14,13 +15,62 @@ import { guess, analyze } from 'web-audio-beat-detector'
 //
 // andre.michelle@gmail.com
 
-if (navigator.mediaDevices) {
+    var context = new AudioContext()
+    // var mediaElement = document.getElementById('player')
+    // var sourceNode = context.createMediaElementSource(mediaElement)
 
-  navigator.mediaDevices.getUserMedia({audio: true}).then( stream => {
-    var context = new AudioContext();
-    var mediaElement = document.getElementById('player');
-    var sourceNode = context.createMediaStreamSource(stream)//context.createMediaElementSource(mediaElement);
+// const request = new Request('http://api.audiotool.com/track/volution/play.ogg')
 
+const loadButton = document.getElementById('load-button')
+const bpmOutput = document.getElementById('bpm-output')
+
+loadButton.addEventListener('click', () => {
+  const songUrl = document.getElementById('song-url').value
+  console.log(songUrl)
+  loadButton.disabled = true
+  const request = new Request(songUrl)
+  fetch(request).then(response => {
+    response.arrayBuffer().then(buffer => {
+      context.decodeAudioData(buffer).then(decodedData => {
+        // Create offline context
+        var offlineContext = new OfflineAudioContext(1, decodedData.length, decodedData.sampleRate)
+
+        // Create buffer source
+        var source = offlineContext.createBufferSource();
+        source.buffer = decodedData;
+
+        // Create filter
+        var filter = offlineContext.createBiquadFilter();
+        filter.type = "lowpass";
+
+        // Pipe the song into the filter, and the filter into the offline context
+        source.connect(filter);
+        filter.connect(offlineContext.destination);
+
+        // Schedule the song to start playing at time:0
+        source.start(0);
+
+        // Render the song
+        offlineContext.startRendering()
+
+        // Act on the result
+        offlineContext.oncomplete = function(e) {
+          // Filtered buffer!
+          var filteredBuffer = e.renderedBuffer;
+          console.log(filteredBuffer)
+          console.log(extractPeaks(filteredBuffer, filteredBuffer.sampleRate))
+          guess(filteredBuffer).then(result => {
+            console.log(result)
+            bpmOutput.value = result.bpm
+
+          })
+        };
+      })
+    })
+  })
+})
+
+/*
     // EQ Properties
     //
     var gainDb = -40.0;
@@ -130,5 +180,4 @@ if (navigator.mediaDevices) {
           });
       })
     })
-  })
-}
+*/
